@@ -1,3 +1,4 @@
+import { LucideArrowLeftRight } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -15,7 +16,9 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 flex items-center justify-between px-6 h-16 bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-white/[0.07]">
       {/* Brand */}
       <Link to="/" className="flex items-center gap-2 font-syne font-extrabold text-lg tracking-tight">
-        <span className="text-2xl">⇄</span>
+        <span className="text-2xl">
+          <LucideArrowLeftRight />
+        </span>
         <span>SkillSwap</span>
       </Link>
 

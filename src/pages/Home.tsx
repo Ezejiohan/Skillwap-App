@@ -1,16 +1,27 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useSkillStore } from "../store/skillStores";
+import {
+
+Laptop,
+Palette,
+Music,
+Languages,
+BarChart2,
+PenLine,
+ChefHat,
+Dumbbell
+} from "lucide-react";
 
 const categories = [
-  { icon: "💻", label: "Technology" },
-  { icon: "🎨", label: "Design" },
-  { icon: "🎵", label: "Music" },
-  { icon: "🌍", label: "Language" },
-  { icon: "📊", label: "Business" },
-  { icon: "✍️", label: "Writing" },
-  { icon: "🍳", label: "Cooking" },
-  { icon: "🏋️", label: "Fitness" },
+{ icon: <Laptop size={24} />, label: "Technology" },
+{ icon: <Palette size={24} />, label: "Design" },
+{ icon: <Music size={24} />, label: "Music" },
+{ icon: <Languages size={24} />, label: "Language" },
+{ icon: <BarChart2 size={24} />, label: "Business" },
+{ icon: <PenLine size={24} />, label: "Writing" },
+{ icon: <ChefHat size={24} />, label: "Cooking" },
+{ icon: <Dumbbell size={24} />, label: "Fitness" },
 ];
 
 const steps = [
