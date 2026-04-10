@@ -1,43 +1,55 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useSkillStore } from "../store/skillStores";
+import { ANIMATION } from "../constants";
 import {
-
-Laptop,
-Palette,
-Music,
-Languages,
-BarChart2,
-PenLine,
-ChefHat,
-Dumbbell
+  Laptop,
+  Palette,
+  Music,
+  Languages,
+  BarChart2,
+  PenLine,
+  ChefHat,
+  Dumbbell,
+  Sparkles,
 } from "lucide-react";
 
-const categories = [
-{ icon: <Laptop size={24} />, label: "Technology" },
-{ icon: <Palette size={24} />, label: "Design" },
-{ icon: <Music size={24} />, label: "Music" },
-{ icon: <Languages size={24} />, label: "Language" },
-{ icon: <BarChart2 size={24} />, label: "Business" },
-{ icon: <PenLine size={24} />, label: "Writing" },
-{ icon: <ChefHat size={24} />, label: "Cooking" },
-{ icon: <Dumbbell size={24} />, label: "Fitness" },
+const categoryIcons = [
+  { icon: Laptop, label: "Technology" },
+  { icon: Palette, label: "Design" },
+  { icon: Music, label: "Music" },
+  { icon: Languages, label: "Language" },
+  { icon: BarChart2, label: "Business" },
+  { icon: PenLine, label: "Writing" },
+  { icon: ChefHat, label: "Cooking" },
+  { icon: Dumbbell, label: "Fitness" },
 ];
 
 const steps = [
-  { num: "01", title: "Post your skill", desc: "Share what you can teach or what you want to learn." },
-  { num: "02", title: "Browse & Match",  desc: "Find people whose skills complement yours." },
-  { num: "03", title: "Connect & Exchange", desc: "Reach out and start your skill exchange." },
+  {
+    num: "01",
+    title: "Post your skill",
+    desc: "Share what you can teach or what you want to learn.",
+  },
+  {
+    num: "02",
+    title: "Browse & Match",
+    desc: "Find people whose skills complement yours.",
+  },
+  {
+    num: "03",
+    title: "Connect & Exchange",
+    desc: "Reach out and start your skill exchange.",
+  },
 ];
 
 const Home = () => {
-  const skills   = useSkillStore((s) => s.skills);
-  const offers   = skills.filter((s) => s.type === "offer").length;
+  const skills = useSkillStore((s) => s.skills);
+  const offers = skills.filter((s) => s.type === "offer").length;
   const requests = skills.filter((s) => s.type === "request").length;
 
   return (
     <div className="min-h-screen">
-
       {/* ── Hero ── */}
       <section className="relative flex flex-col md:flex-row items-center justify-between gap-10 px-6 md:px-16 pt-24 pb-20 min-h-[88vh] overflow-hidden">
         {/* Grid bg */}
@@ -48,7 +60,7 @@ const Home = () => {
           className="relative z-10 flex-1 max-w-xl"
           initial={{ opacity: 0, y: 36 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, ease: "easeOut" }}
+          transition={{ duration: ANIMATION.TRANSITION_SLOW, ease: "easeOut" }}
         >
           <motion.span
             initial={{ opacity: 0 }}
@@ -56,6 +68,7 @@ const Home = () => {
             transition={{ delay: 0.2 }}
             className="inline-block mb-5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest bg-indigo-500/15 border border-indigo-500/30 text-indigo-300"
           >
+            <Sparkles className="w-3 h-3 inline mr-1" />
             Peer-to-peer skill exchange
           </motion.span>
 
@@ -107,9 +120,9 @@ const Home = () => {
           className="relative z-10 flex md:flex-col gap-3 flex-wrap justify-center"
         >
           {[
-            { num: skills.length, label: "Active Skills",  color: "text-indigo-400" },
-            { num: offers,        label: "Offers",         color: "text-green-400" },
-            { num: requests,      label: "Requests",       color: "text-amber-400" },
+            { num: skills.length, label: "Active Skills", color: "text-indigo-400" },
+            { num: offers, label: "Offers", color: "text-green-400" },
+            { num: requests, label: "Requests", color: "text-amber-400" },
           ].map((s) => (
             <div
               key={s.label}
@@ -128,22 +141,25 @@ const Home = () => {
       <section className="px-6 md:px-16 py-16 border-t border-white/[0.07]">
         <h2 className="font-syne text-2xl font-bold tracking-tight mb-8">Browse by Category</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-          {categories.map((cat, i) => (
-            <motion.div
-              key={cat.label}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06 }}
-            >
-              <Link
-                to={`/explore?category=${cat.label}`}
-                className="flex flex-col items-center gap-2 py-5 px-2 rounded-2xl bg-[#111118] border border-white/[0.07] hover:border-white/15 hover:bg-[#18181f] hover:-translate-y-1 transition-all duration-200"
+          {categoryIcons.map((cat, i) => {
+            const Icon = cat.icon;
+            return (
+              <motion.div
+                key={cat.label}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06 }}
               >
-                <span className="text-2xl">{cat.icon}</span>
-                <span className="text-[11px] font-medium text-[#7a7a90]">{cat.label}</span>
-              </Link>
-            </motion.div>
-          ))}
+                <Link
+                  to={`/explore?category=${cat.label}`}
+                  className="flex flex-col items-center gap-2 py-5 px-2 rounded-2xl bg-[#111118] border border-white/[0.07] hover:border-white/15 hover:bg-[#18181f] hover:-translate-y-1 transition-all duration-200"
+                >
+                  <Icon size={24} className="text-indigo-400" />
+                  <span className="text-[11px] font-medium text-[#7a7a90]">{cat.label}</span>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
