@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import type { SkillCategory, SkillType } from "../types/skill";
@@ -46,8 +45,7 @@ const PostSkill = () => {
         throw new Error("Please fill in all required fields");
       }
 
-      addSkill({
-        id: uuidv4(),
+      await addSkill({
         title: data.title.trim(),
         category: data.category,
         description: data.description.trim(),

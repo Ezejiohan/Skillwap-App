@@ -1,106 +1,97 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import type { Skill } from "../types/skill";
-import { STORAGE_KEY } from "../constants";
 
 interface SkillState {
   skills: Skill[];
-  addSkill: (skill: Skill) => void;
-  removeSkill: (id: string) => void;
-  updateSkill: (id: string, skill: Partial<Skill>) => void;
-  getSkillById: (id: string) => Skill | undefined;
+  isLoading: boolean;
   error: string | null;
+  fetchSkills: () => Promise<void>;
+  addSkill: (skill: Omit<Skill, 'id'>) => Promise<void>;
+  removeSkill: (id: string) => Promise<void>;
+  updateSkill: (id: string, skill: Partial<Skill>) => Promise<void>;
+  getSkillById: (id: string) => Skill | undefined;
   clearError: () => void;
 }
 
-export const useSkillStore = create<SkillState>()(
-  persist(
-    (set, get) => ({
-      skills: [],
-      error: null,
+const API_BASE = 'http://localhost:3001/api';
 
-      addSkill: (skill: Skill) => {
-        try {
-          // Validate skill object
-          if (!skill.id || !skill.title || !skill.category) {
-            throw new Error("Invalid skill: missing required fields");
-          }
+export const useSkillStore = create<SkillState>((set, get) => ({
+  skills: [],
+  isLoading: false,
+  error: null,
 
-          // Check for duplicates
-          const exists = get().skills.some((s: Skill) => s.id === skill.id);
-          if (exists) {
-            throw new Error("Skill with this ID already exists");
-          }
-
-          set(
-            (state) => ({
-              skills: [skill, ...state.skills],
-              error: null,
-            }),
-            false
-          );
-        } catch (error) {
-          const message = error instanceof Error ? error.message : "Failed to add skill";
-          set({ error: message });
-          console.error("Error adding skill:", error);
-        }
-      },
-
-      removeSkill: (id: string) => {
-        try {
-          set(
-            (state) => ({
-              skills: state.skills.filter((s) => s.id !== id),
-              error: null,
-            }),
-            false
-          );
-        } catch (error) {
-          const message = error instanceof Error ? error.message : "Failed to remove skill";
-          set({ error: message });
-          console.error("Error removing skill:", error);
-        }
-      },
-
-      updateSkill: (id: string, updates: Partial<Skill>) => {
-        try {
-          const skill = get().getSkillById(id);
-          if (!skill) {
-            throw new Error(`Skill with ID ${id} not found`);
-          }
-
-          set(
-            (state) => ({
-              skills: state.skills.map((s) =>
-                s.id === id ? { ...s, ...updates } : s
-              ),
-              error: null,
-            }),
-            false
-          );
-        } catch (error) {
-          const message = error instanceof Error ? error.message : "Failed to update skill";
-          set({ error: message });
-          console.error("Error updating skill:", error);
-        }
-      },
-
-      getSkillById: (id: string) => {
-        return get().skills.find((s) => s.id === id);
-      },
-
-      clearError: () => {
-        set({ error: null });
-      },
-    }),
-    {
-      name: STORAGE_KEY,
-      onRehydrateStorage: () => (state: SkillState | undefined, error: unknown) => {
-        if (error) {
-          console.error("Error rehydrating store:", error);
-          state?.clearError?.();
-        }
-      },
+  fetchSkills: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await fetch(`${API_BASE}/skills`);
+      if (!response.ok) throw new Error('Failed to fetch skills');
+      const skills = await response.json();
+      set({ skills, isLoading: false });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to fetch skills';
+      set({ error: message, isLoading: false });
+      console.error('Error fetching skills:', error);
     }
-  )
-);
+  },
+
+  addSkill: async (skillData) => {
+    set({ error: null });
+    try {
+      const response = await fetch(`${API_BASE}/skills`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(skillData),
+      });
+      if (!response.ok) throw new Error('Failed to add skill');
+      const newSkill = await response.json();
+      set((state) => ({ skills: [newSkill, ...state.skills] }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to add skill';
+      set({ error: message });
+      console.error('Error adding skill:', error);
+    }
+  },
+
+  removeSkill: async (id) => {
+    set({ error: null });
+    try {
+      const response = await fetch(`${API_BASE}/skills/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to remove skill');
+      set((state) => ({ skills: state.skills.filter((s) => s.id !== id) }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to remove skill';
+      set({ error: message });
+      console.error('Error removing skill:', error);
+    }
+  },
+
+  updateSkill: async (id, updates) => {
+    set({ error: null });
+    try {
+      const response = await fetch(`${API_BASE}/skills/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (!response.ok) throw new Error('Failed to update skill');
+      const updatedSkill = await response.json();
+      set((state) => ({
+        skills: state.skills.map((s) => (s.id === id ? updatedSkill : s)),
+      }));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to update skill';
+      set({ error: message });
+      console.error('Error updating skill:', error);
+    }
+  },
+
+  getSkillById: (id) => {
+    return get().skills.find((s) => s.id === id);
+  },
+
+  clearError: () => {
+    set({ error: null });
+  },
+}));

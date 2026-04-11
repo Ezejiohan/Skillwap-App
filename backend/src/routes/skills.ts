@@ -142,6 +142,9 @@ router.put('/:id', (req: Request, res: Response, next: NextFunction) => {
     }
 
     const skill = skills[skillIndex];
+    if (!skill) {
+      return next(createError('Skill not found', 404));
+    }
 
     // Update fields
     if (title !== undefined) skill.title = title;

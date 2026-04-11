@@ -1,13 +1,20 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import { lazy, Suspense } from "react"
+import { lazy, Suspense, useEffect } from "react"
 import Navbar from "./components/Navbar"
 import { ErrorBoundary } from "./components/ErrorBoundary"
+import { useSkillStore } from "./store/skillStores"
 
 const Home = lazy(() => import("./pages/Home"))
 const Explore = lazy(() => import("./pages/Explore"))
 const PostSkill = lazy(() => import("./pages/PostSkill"))
 
 function App() {
+  const fetchSkills = useSkillStore((state) => state.fetchSkills);
+
+  useEffect(() => {
+    fetchSkills();
+  }, [fetchSkills]);
+
   return (
     <ErrorBoundary>
       <BrowserRouter>
