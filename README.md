@@ -4,6 +4,12 @@ SkillSwap is a modern full-stack web application that enables people to share, d
 
 This project was built as part of the **Remote Hustle Developers Challenge (RHDC) – Stage 1** and has been significantly enhanced with production-ready features.
 
+## 🌐 Links
+
+**Live Demo**: [Click here](https://skillswaps.vercel.app)  
+**GitHub Repository**: [View Code](https://github.com/Ezejiohan/Skillwap-App.git)  
+**Demo Video**: [Watch Video](https://screenrec.com/share/6uNSt2vKcO)
+
 ---
 
 ## 🚀 Recent Improvements
